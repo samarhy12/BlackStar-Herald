@@ -1,0 +1,320 @@
+{% extends "admin_base.html" %} {% block title %}Articles{% endblock %} {% block
+content %}
+<!-- Header -->
+<div
+  class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"
+>
+  <div>
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Articles</h1>
+    <p class="text-gray-600 mt-1 md:mt-2">Manage and organize your content</p>
+  </div>
+  <a
+    href="{{ url_for('admin_new_article') }}"
+    class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold transition shadow-lg gap-2"
+  >
+    <i class="fas fa-plus"></i>
+    <span>New Article</span>
+  </a>
+</div>
+
+<!-- Filter Tabs -->
+<div class="bg-white rounded-xl shadow-lg mb-6 border border-gray-200">
+  <div class="flex gap-2 p-3 md:p-4 overflow-x-auto">
+    <a
+      href="{{ url_for('admin_articles', status='all') }}"
+      class="px-4 py-2 rounded-lg transition text-sm md:text-base font-medium whitespace-nowrap {% if current_status == 'all' %}bg-blue-600 text-white shadow-lg{% else %}text-gray-600 hover:bg-gray-100{% endif %}"
+    >
+      <i class="fas fa-list mr-2"></i>All
+    </a>
+    <a
+      href="{{ url_for('admin_articles', status='published') }}"
+      class="px-4 py-2 rounded-lg transition text-sm md:text-base font-medium whitespace-nowrap {% if current_status == 'published' %}bg-green-600 text-white shadow-lg{% else %}text-gray-600 hover:bg-gray-100{% endif %}"
+    >
+      <i class="fas fa-check-circle mr-2"></i>Published
+    </a>
+    {% if session.role == 'admin' %}
+    <a
+      href="{{ url_for('admin_articles', status='pending') }}"
+      class="px-4 py-2 rounded-lg transition text-sm md:text-base font-medium whitespace-nowrap {% if current_status == 'pending' %}bg-orange-600 text-white shadow-lg{% else %}text-gray-600 hover:bg-gray-100{% endif %}"
+    >
+      <i class="fas fa-clock mr-2"></i>Pending Review
+    </a>
+    {% endif %}
+    <a
+      href="{{ url_for('admin_articles', status='draft') }}"
+      class="px-4 py-2 rounded-lg transition text-sm md:text-base font-medium whitespace-nowrap {% if current_status == 'draft' %}bg-yellow-600 text-white shadow-lg{% else %}text-gray-600 hover:bg-gray-100{% endif %}"
+    >
+      <i class="fas fa-file-alt mr-2"></i>Drafts
+    </a>
+  </div>
+</div>
+
+<!-- Desktop Table View (hidden on mobile) -->
+<div
+  class="hidden md:block bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"
+>
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead
+        class="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200"
+      >
+        <tr>
+          <th
+            class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"
+          >
+            Article
+          </th>
+          <th
+            class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"
+          >
+            Category
+          </th>
+          <th
+            class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider hidden lg:table-cell"
+          >
+            Author
+          </th>
+          <th
+            class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"
+          >
+            Status
+          </th>
+          <th
+            class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"
+          >
+            Views
+          </th>
+          <th
+            class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider hidden lg:table-cell"
+          >
+            Date
+          </th>
+          <th
+            class="px-4 lg:px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        {% if articles %} {% for article in articles %}
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-4 lg:px-6 py-4">
+            <div class="flex items-center gap-3">
+              <img
+                src="{{ article.cover_image }}"
+                alt="{{ article.title }}"
+                class="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+              />
+              <div class="min-w-0">
+                <p
+                  class="font-bold text-gray-900 line-clamp-2 hover:text-blue-600 transition"
+                >
+                  <a
+                    href="{{ url_for('admin_edit_article', article_id=article.id) }}"
+                    >{{ article.title }}</a
+                  >
+                </p>
+                <div class="flex items-center gap-2 mt-1">
+                  {% if article.featured %}
+                  <span
+                    class="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded text-xs font-bold"
+                  >
+                    <i class="fas fa-star mr-1"></i>Featured
+                  </span>
+                  {% endif %} {% if article.breaking %}
+                  <span
+                    class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs font-bold"
+                  >
+                    <i class="fas fa-bolt mr-1"></i>Breaking
+                  </span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 lg:px-6 py-4">
+            <span
+              class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700"
+            >
+              {{ article.category_name }}
+            </span>
+          </td>
+          <td class="px-4 lg:px-6 py-4 hidden lg:table-cell">
+            <span class="text-sm text-gray-600">{{ article.author_name }}</span>
+          </td>
+          <td class="px-4 lg:px-6 py-4">
+            <span
+              class="px-3 py-1 rounded-full text-xs font-bold {% if article.status == 'published' %}bg-green-100 text-green-700 {% elif article.status == 'pending' %}bg-orange-100 text-orange-700 {% else %}bg-yellow-100 text-yellow-700{% endif %}"
+            >
+              {% if article.status == 'pending' %}
+              <i class="fas fa-clock mr-1"></i>Pending {% elif article.status ==
+              'published' %} <i class="fas fa-check-circle mr-1"></i>Published
+              {% else %} <i class="fas fa-file-alt mr-1"></i>{{
+              article.status.title() }} {% endif %}
+            </span>
+          </td>
+          <td class="px-4 lg:px-6 py-4">
+            <div class="flex items-center gap-2">
+              <i class="far fa-eye text-gray-400"></i>
+              <span class="font-medium text-gray-900"
+                >{{ "{:,}".format(article.view_count) }}</span
+              >
+            </div>
+          </td>
+          <td
+            class="px-4 lg:px-6 py-4 text-sm text-gray-600 hidden lg:table-cell"
+          >
+            {{ article.created_at[:10] }}
+          </td>
+          <td class="px-4 lg:px-6 py-4 text-right">
+            <div class="flex items-center justify-end gap-2">
+              {% if article.status == 'published' %}
+              <a
+                href="/article/{{ article.slug }}"
+                target="_blank"
+                class="text-gray-600 hover:text-gray-900 p-2 hover:bg-gray-100 rounded-lg transition"
+                title="View"
+              >
+                <i class="fas fa-eye"></i>
+              </a>
+              {% endif %}
+              <a
+                href="{{ url_for('admin_edit_article', article_id=article.id) }}"
+                class="text-blue-600 hover:text-blue-700 p-2 hover:bg-blue-50 rounded-lg transition"
+                title="Edit"
+              >
+                <i class="fas fa-edit"></i>
+              </a>
+              <form
+                method="POST"
+                action="{{ url_for('admin_delete_article', article_id=article.id) }}"
+                class="inline"
+                onsubmit="
+                  return confirm(
+                    'Are you sure you want to delete this article?',
+                  );
+                "
+              >
+                <button
+                  type="submit"
+                  class="text-red-600 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition"
+                  title="Delete"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %} {% else %}
+        <tr>
+          <td colspan="7" class="px-6 py-12 text-center">
+            <div class="text-gray-400">
+              <i class="fas fa-newspaper text-5xl mb-4"></i>
+              <p class="text-lg font-medium text-gray-500">No articles found</p>
+              <p class="text-sm text-gray-400 mt-2">
+                Create your first article to get started
+              </p>
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Mobile Card View (visible on mobile only) -->
+<div class="md:hidden space-y-4">
+  {% if articles %} {% for article in articles %}
+  <div
+    class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"
+  >
+    <div class="flex">
+      <img
+        src="{{ article.cover_image }}"
+        alt="{{ article.title }}"
+        class="w-24 h-24 object-cover"
+      />
+      <div class="flex-1 p-4">
+        <h3 class="font-bold text-gray-900 mb-2 line-clamp-2 text-sm">
+          <a href="{{ url_for('admin_edit_article', article_id=article.id) }}"
+            >{{ article.title }}</a
+          >
+        </h3>
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <span
+            class="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-700"
+          >
+            {{ article.category_name }}
+          </span>
+          <span
+            class="px-2 py-0.5 rounded-full text-xs font-bold {% if article.status == 'published' %}bg-green-100 text-green-700 {% elif article.status == 'pending' %}bg-orange-100 text-orange-700 {% else %}bg-yellow-100 text-yellow-700{% endif %}"
+          >
+            {% if article.status == 'pending' %}Pending {% else %}{{
+            article.status.title() }}{% endif %}
+          </span>
+        </div>
+        <div class="flex items-center gap-3 text-xs text-gray-500">
+          <span
+            ><i class="far fa-eye mr-1"></i>{{ "{:,}".format(article.view_count)
+            }}</span
+          >
+          <span
+            ><i class="far fa-calendar mr-1"></i>{{ article.created_at[:10]
+            }}</span
+          >
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-gray-200 px-4 py-3 bg-gray-50 flex gap-2">
+      {% if article.status == 'published' %}
+      <a
+        href="/article/{{ article.slug }}"
+        target="_blank"
+        class="flex-1 text-center bg-white border border-gray-300 text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition"
+      >
+        <i class="fas fa-eye mr-1"></i>View
+      </a>
+      {% endif %}
+      <a
+        href="{{ url_for('admin_edit_article', article_id=article.id) }}"
+        class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition"
+      >
+        <i class="fas fa-edit mr-1"></i>Edit
+      </a>
+      <form
+        method="POST"
+        action="{{ url_for('admin_delete_article', article_id=article.id) }}"
+        class="inline"
+        onsubmit="return confirm('Delete this article?');"
+      >
+        <button
+          type="submit"
+          class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition"
+        >
+          <i class="fas fa-trash"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endfor %} {% else %}
+  <div
+    class="bg-white rounded-xl shadow-lg p-12 text-center border border-gray-200"
+  >
+    <i class="fas fa-newspaper text-gray-300 text-6xl mb-4"></i>
+    <p class="text-lg font-medium text-gray-500">No articles found</p>
+    <p class="text-sm text-gray-400 mt-2 mb-6">
+      Create your first article to get started
+    </p>
+    <a
+      href="{{ url_for('admin_new_article') }}"
+      class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition"
+    >
+      <i class="fas fa-plus mr-2"></i>New Article
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

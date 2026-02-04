@@ -1,0 +1,173 @@
+{% extends "base.html" %} {% block content %}
+<section class="bg-white py-8 border-b border-gray-200">
+  <div class="container mx-auto px-4">
+    <div id="category-header">
+      <h1
+        id="category-name"
+        class="font-headline text-4xl font-bold text-gray-900 mb-2"
+      ></h1>
+      <p id="category-description" class="text-gray-600"></p>
+    </div>
+  </div>
+</section>
+
+<section class="container mx-auto px-4 py-8">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+      <div id="articles-grid" class="space-y-6">
+        <div class="flex justify-center items-center py-12">
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <div class="text-center mt-8">
+        <button
+          id="load-more"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition hidden"
+        >
+          Load More Articles
+        </button>
+      </div>
+    </div>
+
+    <aside class="lg:col-span-1">
+      <div class="bg-white rounded-lg shadow-sm p-6 mb-6 sticky top-20">
+        <h3 class="font-headline text-xl font-bold text-gray-900 mb-4">
+          <i class="fas fa-fire text-orange-500 mr-2"></i>Trending
+        </h3>
+        <div id="trending-articles" class="space-y-4"></div>
+      </div>
+
+      <div class="ad-container rounded-lg" style="min-height: 600px">
+        <div class="text-center text-gray-400">
+          <i class="fas fa-ad text-4xl mb-2"></i>
+          <p class="text-sm">Advertisement</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %} {% block extra_js %}
+<script>
+  const slug = window.location.pathname.split("/").pop();
+  let currentPage = 1;
+  let hasMore = true;
+
+  async function fetchCategory() {
+    try {
+      const response = await fetch("/api/categories");
+      const categories = await response.json();
+      const category = categories.find((c) => c.slug === slug);
+
+      if (category) {
+        document.getElementById("category-name").textContent =
+          `${category.icon} ${category.name}`;
+        document.getElementById("category-description").textContent =
+          category.description || "";
+        document.title = `${category.name} - BlackStar Herald`;
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  async function fetchArticles(page = 1, append = false) {
+    try {
+      showLoading();
+      const response = await fetch(
+        `/api/articles?category=${slug}&page=${page}&limit=10`,
+      );
+      const data = await response.json();
+
+      displayArticles(data.articles, append);
+      hasMore = data.has_next;
+      document.getElementById("load-more").classList.toggle("hidden", !hasMore);
+      hideLoading();
+    } catch (error) {
+      console.error("Error:", error);
+      hideLoading();
+    }
+  }
+
+  function displayArticles(articles, append = false) {
+    const container = document.getElementById("articles-grid");
+
+    if (articles.length === 0 && !append) {
+      container.innerHTML =
+        '<p class="text-center text-gray-500 py-8">No articles in this category yet</p>';
+      return;
+    }
+
+    const html = articles
+      .map(
+        (article) => `
+            <article class="bg-white rounded-lg shadow-sm overflow-hidden hover-lift">
+                <div class="md:flex">
+                    <div class="md:w-1/3">
+                        <a href="/article/${article.slug}">
+                            <img src="${article.image_url}" alt="${article.title}" class="w-full h-48 md:h-full object-cover">
+                        </a>
+                    </div>
+                    <div class="p-6 md:w-2/3">
+                        <h3 class="font-headline text-2xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition">
+                            <a href="/article/${article.slug}">${article.title}</a>
+                        </h3>
+                        <p class="text-gray-600 mb-4">${article.excerpt}</p>
+                        <div class="flex items-center text-sm text-gray-500 space-x-4">
+                            <span><i class="far fa-clock mr-1"></i> ${article.read_time}</span>
+                            <span><i class="far fa-eye mr-1"></i> ${article.views.toLocaleString()}</span>
+                            <span><i class="far fa-calendar mr-1"></i> ${article.date}</span>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        `,
+      )
+      .join("");
+
+    if (append) {
+      container.innerHTML += html;
+    } else {
+      container.innerHTML = html;
+    }
+  }
+
+  async function fetchTrending() {
+    try {
+      const response = await fetch("/api/articles/trending?limit=5");
+      const articles = await response.json();
+
+      const html = articles
+        .map(
+          (article, index) => `
+                <div class="flex gap-3 pb-4 border-b border-gray-200 last:border-0">
+                    <span class="text-2xl font-bold text-gray-300">${(index + 1).toString().padStart(2, "0")}</span>
+                    <div>
+                        <h4 class="font-medium text-sm hover:text-blue-600 transition line-clamp-2">
+                            <a href="/article/${article.slug}">${article.title}</a>
+                        </h4>
+                        <span class="text-xs text-gray-500 mt-1"><i class="far fa-eye mr-1"></i> ${article.views.toLocaleString()}</span>
+                    </div>
+                </div>
+            `,
+        )
+        .join("");
+
+      document.getElementById("trending-articles").innerHTML = html;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  document.getElementById("load-more").addEventListener("click", () => {
+    currentPage++;
+    fetchArticles(currentPage, true);
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    fetchCategory();
+    fetchArticles(1);
+    fetchTrending();
+  });
+</script>
+{% endblock %}

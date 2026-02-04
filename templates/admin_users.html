@@ -1,0 +1,549 @@
+{% extends "admin_base.html" %} {% block title %}User Management{% endblock %}
+{% block content %}
+<!-- Header -->
+<div
+  class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"
+>
+  <div>
+    <h1 class="text-2xl md:text-3xl font-bold text-gray-900">
+      User Management
+    </h1>
+    <p class="text-gray-600 mt-1 md:mt-2">
+      Manage writers, editors, and administrators
+    </p>
+  </div>
+  <button
+    onclick="openAddUserModal()"
+    class="inline-flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-xl font-bold transition shadow-lg gap-2 text-sm md:text-base"
+  >
+    <i class="fas fa-user-plus"></i>
+    <span>Add New User</span>
+  </button>
+</div>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+  <div
+    class="bg-white rounded-2xl shadow-lg p-4 md:p-6 border-l-4 border-blue-600"
+  >
+    <div class="flex items-center justify-between mb-4">
+      <div
+        class="bg-blue-100 text-blue-600 w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center"
+      >
+        <i class="fas fa-users text-xl md:text-2xl"></i>
+      </div>
+    </div>
+    <p class="text-gray-500 text-xs md:text-sm font-medium mb-1">Total Users</p>
+    <p class="text-3xl md:text-4xl font-bold text-gray-900">
+      {{ stats.total }}
+    </p>
+  </div>
+
+  <div
+    class="bg-white rounded-2xl shadow-lg p-4 md:p-6 border-l-4 border-purple-600"
+  >
+    <div class="flex items-center justify-between mb-4">
+      <div
+        class="bg-purple-100 text-purple-600 w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center"
+      >
+        <i class="fas fa-shield-alt text-xl md:text-2xl"></i>
+      </div>
+    </div>
+    <p class="text-gray-500 text-xs md:text-sm font-medium mb-1">
+      Administrators
+    </p>
+    <p class="text-3xl md:text-4xl font-bold text-gray-900">
+      {{ stats.admins }}
+    </p>
+  </div>
+
+  <div
+    class="bg-white rounded-2xl shadow-lg p-4 md:p-6 border-l-4 border-green-600"
+  >
+    <div class="flex items-center justify-between mb-4">
+      <div
+        class="bg-green-100 text-green-600 w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center"
+      >
+        <i class="fas fa-pen text-xl md:text-2xl"></i>
+      </div>
+    </div>
+    <p class="text-gray-500 text-xs md:text-sm font-medium mb-1">Writers</p>
+    <p class="text-3xl md:text-4xl font-bold text-gray-900">
+      {{ stats.writers }}
+    </p>
+  </div>
+
+  <div
+    class="bg-white rounded-2xl shadow-lg p-4 md:p-6 border-l-4 border-orange-600"
+  >
+    <div class="flex items-center justify-between mb-4">
+      <div
+        class="bg-orange-100 text-orange-600 w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center"
+      >
+        <i class="fas fa-clock text-xl md:text-2xl"></i>
+      </div>
+    </div>
+    <p class="text-gray-500 text-xs md:text-sm font-medium mb-1">
+      Active This Month
+    </p>
+    <p class="text-3xl md:text-4xl font-bold text-gray-900">
+      {{ stats.active_month }}
+    </p>
+  </div>
+</div>
+
+<!-- Filter Tabs -->
+<div class="bg-white rounded-xl shadow-lg mb-6 border border-gray-200">
+  <div class="flex gap-2 p-3 md:p-4 overflow-x-auto">
+    <a
+      href="{{ url_for('admin_users', role='all') }}"
+      class="px-4 py-2 rounded-lg transition text-sm md:text-base font-medium whitespace-nowrap {% if current_role == 'all' %}bg-blue-600 text-white shadow-lg{% else %}text-gray-600 hover:bg-gray-100{% endif %}"
+    >
+      <i class="fas fa-users mr-2"></i>All Users
+    </a>
+    <a
+      href="{{ url_for('admin_users', role='admin') }}"
+      class="px-4 py-2 rounded-lg transition text-sm md:text-base font-medium whitespace-nowrap {% if current_role == 'admin' %}bg-purple-600 text-white shadow-lg{% else %}text-gray-600 hover:bg-gray-100{% endif %}"
+    >
+      <i class="fas fa-shield-alt mr-2"></i>Admins
+    </a>
+    <a
+      href="{{ url_for('admin_users', role='writer') }}"
+      class="px-4 py-2 rounded-lg transition text-sm md:text-base font-medium whitespace-nowrap {% if current_role == 'writer' %}bg-green-600 text-white shadow-lg{% else %}text-gray-600 hover:bg-gray-100{% endif %}"
+    >
+      <i class="fas fa-pen mr-2"></i>Writers
+    </a>
+  </div>
+</div>
+
+<!-- Desktop Table View -->
+<div
+  class="hidden md:block bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"
+>
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead
+        class="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200"
+      >
+        <tr>
+          <th
+            class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"
+          >
+            User
+          </th>
+          <th
+            class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"
+          >
+            Email
+          </th>
+          <th
+            class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"
+          >
+            Role
+          </th>
+          <th
+            class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider hidden lg:table-cell"
+          >
+            Articles
+          </th>
+          <th
+            class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider hidden lg:table-cell"
+          >
+            Joined
+          </th>
+          <th
+            class="px-4 lg:px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200">
+        {% if users %} {% for user in users %}
+        <tr class="hover:bg-gray-50 transition">
+          <td class="px-4 lg:px-6 py-4">
+            <div class="flex items-center gap-3">
+              <img
+                src="https://ui-avatars.com/api/?name={{ user.full_name }}&background=random&color=fff&bold=true"
+                alt="{{ user.full_name }}"
+                class="w-12 h-12 rounded-full ring-2 ring-gray-200"
+              />
+              <div>
+                <p class="font-bold text-gray-900">{{ user.full_name }}</p>
+                <p class="text-xs text-gray-500">@{{ user.username }}</p>
+              </div>
+            </div>
+          </td>
+          <td class="px-4 lg:px-6 py-4">
+            <span class="text-sm text-gray-700"
+              >{{ user.email or 'No email set' }}</span
+            >
+          </td>
+          <td class="px-4 lg:px-6 py-4">
+            {% if user.role == 'admin' %}
+            <span
+              class="px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700"
+            >
+              <i class="fas fa-shield-alt mr-1"></i>Admin
+            </span>
+            {% else %}
+            <span
+              class="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700"
+            >
+              <i class="fas fa-pen mr-1"></i>Writer
+            </span>
+            {% endif %}
+          </td>
+          <td class="px-4 lg:px-6 py-4 hidden lg:table-cell">
+            <div class="flex items-center gap-2">
+              <i class="far fa-newspaper text-gray-400"></i>
+              <span class="font-medium text-gray-900"
+                >{{ user.article_count }}</span
+              >
+            </div>
+          </td>
+          <td
+            class="px-4 lg:px-6 py-4 text-sm text-gray-600 hidden lg:table-cell"
+          >
+            {{ user.created_at[:10] if user.created_at else 'N/A' }}
+          </td>
+          <td class="px-4 lg:px-6 py-4 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <button
+                onclick="editUser({{ user.id }})"
+                class="text-blue-600 hover:text-blue-700 p-2 hover:bg-blue-50 rounded-lg transition"
+                title="Edit"
+              >
+                <i class="fas fa-edit"></i>
+              </button>
+              {% if user.id != session.user_id %}
+              <button
+                onclick="deleteUser({{ user.id }})"
+                class="text-red-600 hover:text-red-700 p-2 hover:bg-red-50 rounded-lg transition"
+                title="Delete"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %} {% else %}
+        <tr>
+          <td colspan="6" class="px-6 py-12 text-center">
+            <div class="text-gray-400">
+              <i class="fas fa-users text-5xl mb-4"></i>
+              <p class="text-lg font-medium text-gray-500">No users found</p>
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Mobile Card View -->
+<div class="md:hidden space-y-4">
+  {% if users %} {% for user in users %}
+  <div
+    class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"
+  >
+    <div class="p-4">
+      <div class="flex items-start gap-3 mb-4">
+        <img
+          src="https://ui-avatars.com/api/?name={{ user.full_name }}&background=random&color=fff&bold=true"
+          alt="{{ user.full_name }}"
+          class="w-16 h-16 rounded-full ring-2 ring-gray-200"
+        />
+        <div class="flex-1">
+          <h3 class="font-bold text-gray-900 text-base mb-1">
+            {{ user.full_name }}
+          </h3>
+          <p class="text-xs text-gray-500 mb-2">@{{ user.username }}</p>
+          <div class="flex flex-wrap items-center gap-2">
+            {% if user.role == 'admin' %}
+            <span
+              class="px-2 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-700"
+            >
+              <i class="fas fa-shield-alt mr-1"></i>Admin
+            </span>
+            {% else %}
+            <span
+              class="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700"
+            >
+              <i class="fas fa-pen mr-1"></i>Writer
+            </span>
+            {% endif %}
+            <span class="text-xs text-gray-500">
+              <i class="far fa-newspaper mr-1"></i>{{ user.article_count }}
+              articles
+            </span>
+          </div>
+        </div>
+      </div>
+      {% if user.email %}
+      <p class="text-sm text-gray-600 mb-3">
+        <i class="far fa-envelope mr-2"></i>{{ user.email }}
+      </p>
+      {% endif %}
+      <div class="flex gap-2 pt-3 border-t border-gray-200">
+        <button
+          onclick="editUser({{ user.id }})"
+          class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition"
+        >
+          <i class="fas fa-edit mr-1"></i>Edit
+        </button>
+        {% if user.id != session.user_id %}
+        <button
+          onclick="deleteUser({{ user.id }})"
+          class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
+        >
+          <i class="fas fa-trash"></i>
+        </button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endfor %} {% else %}
+  <div
+    class="bg-white rounded-xl shadow-lg p-12 text-center border border-gray-200"
+  >
+    <i class="fas fa-users text-gray-300 text-6xl mb-4"></i>
+    <p class="text-lg font-medium text-gray-500">No users found</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Add/Edit User Modal -->
+<div
+  id="userModal"
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden"
+>
+  <div
+    class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+  >
+    <div
+      class="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-t-2xl flex items-center justify-between"
+    >
+      <h3 class="text-xl font-bold" id="modalTitle">Add New User</h3>
+      <button
+        onclick="closeModal()"
+        class="text-white hover:text-gray-200 transition"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+
+    <form id="userForm" class="p-6 space-y-4">
+      <input type="hidden" id="userId" name="user_id" />
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700 mb-2"
+          >Full Name *</label
+        >
+        <input
+          type="text"
+          id="fullName"
+          name="full_name"
+          required
+          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+          placeholder="John Doe"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700 mb-2"
+          >Username *</label
+        >
+        <input
+          type="text"
+          id="username"
+          name="username"
+          required
+          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+          placeholder="johndoe"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700 mb-2">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+          placeholder="john@example.com"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700 mb-2"
+          >Password
+          <span id="passwordHint" class="text-gray-500 font-normal"
+            >(leave blank to keep current)</span
+          ></label
+        >
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+          placeholder="••••••••"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700 mb-2">Role *</label>
+        <select
+          id="role"
+          name="role"
+          required
+          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+        >
+          <option value="writer">Writer</option>
+          <option value="admin">Administrator</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-bold text-gray-700 mb-2">Bio</label>
+        <textarea
+          id="bio"
+          name="bio"
+          rows="3"
+          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
+          placeholder="Short bio..."
+        ></textarea>
+      </div>
+
+      <div class="flex gap-3 pt-4">
+        <button
+          type="button"
+          onclick="closeModal()"
+          class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition shadow-lg"
+        >
+          <span id="submitText">Add User</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %} {% block extra_js %}
+<script>
+  const modal = document.getElementById("userModal");
+  const userForm = document.getElementById("userForm");
+  const modalTitle = document.getElementById("modalTitle");
+  const submitText = document.getElementById("submitText");
+  const passwordHint = document.getElementById("passwordHint");
+
+  function openAddUserModal() {
+    modalTitle.textContent = "Add New User";
+    submitText.textContent = "Add User";
+    passwordHint.textContent = "*";
+    document.getElementById("password").required = true;
+    userForm.reset();
+    document.getElementById("userId").value = "";
+    modal.classList.remove("hidden");
+    document.body.style.overflow = "hidden";
+  }
+
+  async function editUser(userId) {
+    try {
+      const response = await fetch(`/admin/users/${userId}`);
+      const user = await response.json();
+
+      modalTitle.textContent = "Edit User";
+      submitText.textContent = "Update User";
+      passwordHint.textContent = "(leave blank to keep current)";
+      document.getElementById("password").required = false;
+
+      document.getElementById("userId").value = user.id;
+      document.getElementById("fullName").value = user.full_name;
+      document.getElementById("username").value = user.username;
+      document.getElementById("email").value = user.email || "";
+      document.getElementById("role").value = user.role;
+      document.getElementById("bio").value = user.bio || "";
+
+      modal.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    } catch (error) {
+      alert("Error loading user data");
+    }
+  }
+
+  function closeModal() {
+    modal.classList.add("hidden");
+    document.body.style.overflow = "auto";
+    userForm.reset();
+  }
+
+  userForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(userForm);
+    const data = Object.fromEntries(formData.entries());
+
+    const userId = document.getElementById("userId").value;
+    const url = userId
+      ? `/admin/users/${userId}/update`
+      : "/admin/users/create";
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        location.reload();
+      } else {
+        alert(result.error || "Failed to save user");
+      }
+    } catch (error) {
+      alert("Error saving user");
+    }
+  });
+
+  async function deleteUser(userId) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this user? All their articles will remain but will show as authored by a deleted user.",
+      )
+    )
+      return;
+
+    try {
+      const response = await fetch(`/admin/users/${userId}/delete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.ok) {
+        location.reload();
+      } else {
+        alert("Failed to delete user");
+      }
+    } catch (error) {
+      alert("Error deleting user");
+    }
+  }
+
+  // Close modal when clicking outside
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+</script>
+{% endblock %}

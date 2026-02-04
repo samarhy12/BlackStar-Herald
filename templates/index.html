@@ -1,0 +1,670 @@
+{% extends "base.html" %} {% block content %}
+
+<!-- Top Ad Space - Premium Placement -->
+<section class="bg-gray-100 border-b-2 border-gray-200">
+  <div class="container mx-auto px-4 py-4">
+    <div class="ad-container rounded-xl shadow-sm" style="min-height: 100px">
+      <div class="text-center text-gray-400 py-4">
+        <i class="fas fa-ad text-5xl mb-2"></i>
+        <p class="text-sm font-semibold">Premium Advertisement Space</p>
+        <p class="text-xs text-gray-400">(970 x 90 - Leaderboard)</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Hero/Featured Section with enhanced design -->
+<section class="bg-gradient-to-b from-white to-gray-50 py-10">
+  <div class="container mx-auto px-4">
+    <!-- Section Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center space-x-3">
+        <div
+          class="w-1 h-8 bg-gradient-to-b from-blue-600 to-blue-800 rounded-full"
+        ></div>
+        <h2
+          class="font-headline text-3xl font-bold text-gray-900 gradient-text"
+        >
+          Featured Stories
+        </h2>
+      </div>
+      <div class="hidden md:flex items-center space-x-2 text-sm text-gray-500">
+        <i class="fas fa-check-circle text-green-500"></i>
+        <span>Real Quality News</span>
+      </div>
+    </div>
+
+    <div id="featured-articles" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Loading state with skeleton -->
+      <div class="col-span-full">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="lg:row-span-2 bg-gray-200 rounded-xl h-96 skeleton"></div>
+          <div class="bg-gray-200 rounded-xl h-64 skeleton"></div>
+          <div class="bg-gray-200 rounded-xl h-64 skeleton"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main Content Grid with enhanced spacing -->
+<section class="container mx-auto px-4 py-10">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Articles Column -->
+    <div class="lg:col-span-2">
+      <!-- Category Filter with enhanced UI -->
+      <div class="card-premium p-6 mb-8 fade-in-up">
+        <div
+          class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+        >
+          <div class="flex items-center space-x-3">
+            <div
+              class="w-1 h-8 bg-gradient-to-b from-blue-600 to-blue-800 rounded-full"
+            ></div>
+            <h2
+              class="font-headline text-2xl md:text-3xl font-bold text-gray-900"
+            >
+              Latest News
+            </h2>
+          </div>
+          <div class="flex items-center space-x-2">
+            <label
+              for="category-filter"
+              class="text-sm text-gray-600 font-medium"
+              >Filter:</label
+            >
+            <select
+              id="category-filter"
+              class="px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 text-sm font-medium bg-white cursor-pointer"
+            >
+              <option value="All">All Categories</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="mt-6 flex flex-wrap gap-4 pt-4 border-t border-gray-100">
+          <div class="flex items-center space-x-2 text-sm">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-gray-600">Live Updates</span>
+          </div>
+          <div class="flex items-center space-x-2 text-sm text-gray-500">
+            <i class="far fa-newspaper"></i>
+            <span id="article-count">Loading articles...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ad Space - Leaderboard with better styling -->
+      <div class="mb-8">
+        <div
+          class="ad-container rounded-xl shadow-sm"
+          style="min-height: 100px"
+        >
+          <div class="text-center text-gray-400">
+            <i class="fas fa-ad text-4xl mb-2"></i>
+            <p class="text-sm font-semibold">Advertisement</p>
+            <p class="text-xs text-gray-400">(728 x 90)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Articles Grid with enhanced cards -->
+      <div id="articles-grid" class="space-y-6">
+        <!-- Loading state with skeletons -->
+        <div class="space-y-6">
+          <div class="card-premium overflow-hidden">
+            <div class="md:flex">
+              <div class="md:w-1/3 bg-gray-200 h-48 md:h-auto skeleton"></div>
+              <div class="p-6 md:w-2/3 space-y-3">
+                <div class="bg-gray-200 h-4 w-24 rounded skeleton"></div>
+                <div class="bg-gray-200 h-6 w-full rounded skeleton"></div>
+                <div class="bg-gray-200 h-6 w-5/6 rounded skeleton"></div>
+                <div class="bg-gray-200 h-4 w-full rounded skeleton"></div>
+                <div class="flex gap-4">
+                  <div class="bg-gray-200 h-3 w-20 rounded skeleton"></div>
+                  <div class="bg-gray-200 h-3 w-20 rounded skeleton"></div>
+                  <div class="bg-gray-200 h-3 w-20 rounded skeleton"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-premium overflow-hidden">
+            <div class="md:flex">
+              <div class="md:w-1/3 bg-gray-200 h-48 md:h-auto skeleton"></div>
+              <div class="p-6 md:w-2/3 space-y-3">
+                <div class="bg-gray-200 h-4 w-24 rounded skeleton"></div>
+                <div class="bg-gray-200 h-6 w-full rounded skeleton"></div>
+                <div class="bg-gray-200 h-6 w-5/6 rounded skeleton"></div>
+                <div class="bg-gray-200 h-4 w-full rounded skeleton"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Load More Button with enhanced styling -->
+      <div class="text-center mt-10">
+        <button
+          id="load-more"
+          class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-10 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 hidden"
+        >
+          <i class="fas fa-chevron-down mr-2"></i>Load More Articles
+        </button>
+        <div id="loading-more" class="hidden flex justify-center py-6">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enhanced Sidebar -->
+    <aside class="lg:col-span-1 space-y-6">
+      <!-- Trending News with premium design -->
+      <div class="card-premium p-6 sticky top-24 fade-in-up">
+        <div class="flex items-center justify-between mb-6">
+          <h3
+            class="font-headline text-2xl font-bold text-gray-900 flex items-center"
+          >
+            <div
+              class="w-1 h-8 bg-gradient-to-b from-orange-500 to-red-600 rounded-full mr-3"
+            ></div>
+            Trending Now
+          </h3>
+          <i class="fas fa-fire text-orange-500 text-2xl animate-pulse"></i>
+        </div>
+        <div id="trending-articles" class="space-y-4">
+          <!-- Loading state with skeletons -->
+          <div class="space-y-4">
+            <div class="flex gap-3 pb-4 border-b border-gray-100">
+              <div class="bg-gray-200 text-2xl font-bold text-gray-300 w-8">
+                01
+              </div>
+              <div class="flex-1 space-y-2">
+                <div class="bg-gray-200 h-4 w-full rounded skeleton"></div>
+                <div class="bg-gray-200 h-4 w-3/4 rounded skeleton"></div>
+                <div class="bg-gray-200 h-3 w-20 rounded skeleton"></div>
+              </div>
+            </div>
+            <div class="flex gap-3 pb-4 border-b border-gray-100">
+              <div class="bg-gray-200 text-2xl font-bold text-gray-300 w-8">
+                02
+              </div>
+              <div class="flex-1 space-y-2">
+                <div class="bg-gray-200 h-4 w-full rounded skeleton"></div>
+                <div class="bg-gray-200 h-4 w-3/4 rounded skeleton"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ad Space - Rectangle with enhanced design -->
+      <div class="mb-6 sticky top-[600px]">
+        <div
+          class="ad-container rounded-xl shadow-sm"
+          style="min-height: 600px"
+        >
+          <div class="text-center text-gray-400">
+            <i class="fas fa-ad text-5xl mb-3"></i>
+            <p class="text-sm font-semibold">Advertisement</p>
+            <p class="text-xs text-gray-400">(300 x 600 - Half Page)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Popular Tags with enhanced design -->
+      <div class="card-premium p-6">
+        <div class="flex items-center mb-6">
+          <div
+            class="w-1 h-8 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full mr-3"
+          ></div>
+          <h3 class="font-headline text-xl font-bold text-gray-900">
+            Popular Tags
+          </h3>
+        </div>
+        <div id="popular-tags" class="flex flex-wrap gap-2">
+          <!-- Loading state -->
+          <div class="flex flex-wrap gap-2 w-full">
+            <div class="bg-gray-200 h-8 w-20 rounded-full skeleton"></div>
+            <div class="bg-gray-200 h-8 w-24 rounded-full skeleton"></div>
+            <div class="bg-gray-200 h-8 w-16 rounded-full skeleton"></div>
+            <div class="bg-gray-200 h-8 w-28 rounded-full skeleton"></div>
+            <div class="bg-gray-200 h-8 w-20 rounded-full skeleton"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Newsletter Widget -->
+      <div
+        class="card-premium p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200"
+      >
+        <div class="text-center mb-4">
+          <div
+            class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"
+          >
+            <i class="fas fa-envelope-open text-white text-2xl"></i>
+          </div>
+          <h3 class="font-headline text-xl font-bold text-gray-900 mb-2">
+            Stay Updated
+          </h3>
+          <p class="text-sm text-gray-600">
+            Get the latest news delivered to your inbox
+          </p>
+        </div>
+        <form id="sidebar-newsletter-form" class="space-y-3">
+          <input
+            type="email"
+            placeholder="Enter your email"
+            required
+            class="w-full px-4 py-3 border-2 border-blue-200 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300 text-sm"
+          />
+          <button
+            type="submit"
+            class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 py-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg"
+          >
+            Subscribe
+          </button>
+        </form>
+        <div
+          id="sidebar-newsletter-message"
+          class="mt-3 text-sm text-center"
+        ></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- Ad Space - Bottom Banner with enhanced styling -->
+<section class="container mx-auto px-4 py-10">
+  <div class="ad-container rounded-xl shadow-md" style="min-height: 280px">
+    <div class="text-center text-gray-400">
+      <i class="fas fa-ad text-6xl mb-3"></i>
+      <p class="text-base font-semibold">Advertisement</p>
+      <p class="text-sm text-gray-400">(970 x 250 - Billboard)</p>
+    </div>
+  </div>
+</section>
+
+{% endblock %} {% block extra_js %}
+<script>
+  let currentPage = 1;
+  let currentCategory = "All";
+  let hasMore = true;
+  let totalArticles = 0;
+
+  // Fetch featured articles
+  async function fetchFeaturedArticles() {
+    try {
+      const response = await fetch("/api/articles/featured");
+      const articles = await response.json();
+      displayFeaturedArticles(articles);
+    } catch (error) {
+      console.error("Error fetching featured articles:", error);
+      document.getElementById("featured-articles").innerHTML =
+        '<p class="text-center text-gray-500 col-span-full py-12">Unable to load featured articles</p>';
+    }
+  }
+
+  // Display featured articles with enhanced design
+  function displayFeaturedArticles(articles) {
+    const container = document.getElementById("featured-articles");
+
+    if (articles.length === 0) {
+      container.innerHTML =
+        '<p class="text-center text-gray-500 col-span-full py-12">No featured articles available</p>';
+      return;
+    }
+
+    let html = "";
+
+    // First featured article (large) with enhanced styling
+    if (articles[0]) {
+      const article = articles[0];
+      html += `
+        <div class="lg:row-span-2 relative group overflow-hidden rounded-2xl shadow-2xl hover-lift">
+          <a href="/article/${article.slug}" class="block img-zoom">
+            <div class="relative h-96 lg:h-full img-overlay">
+              <img src="${article.image_url}" alt="${article.title}" 
+                   class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 group-hover:opacity-70 transition-opacity duration-500"></div>
+              <div class="absolute bottom-0 left-0 right-0 p-8 z-10">
+                <div class="flex flex-wrap gap-2 mb-4">
+                  ${article.breaking ? '<span class="bg-gradient-to-r from-red-600 to-red-700 text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg pulse-animation"><i class="fas fa-bolt mr-1"></i> BREAKING NEWS</span>' : ""}
+                  <span class="category-badge ${article.category.color} text-white px-4 py-2 rounded-lg text-xs font-bold shadow-lg">
+                    ${article.category.name}
+                  </span>
+                </div>
+                <h2 class="font-headline text-3xl lg:text-4xl font-bold text-white mb-3 line-clamp-3 leading-tight">
+                  ${article.title}
+                </h2>
+                <p class="text-gray-200 text-base mb-4 line-clamp-2 leading-relaxed">${article.excerpt}</p>
+                <div class="flex flex-wrap items-center gap-4 text-gray-200 text-sm">
+                  <span class="flex items-center"><i class="far fa-clock mr-2"></i> ${article.read_time}</span>
+                  <span class="flex items-center"><i class="far fa-eye mr-2"></i> ${article.views.toLocaleString()}</span>
+                  <span class="flex items-center"><i class="far fa-calendar mr-2"></i> ${article.date}</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      `;
+    }
+
+    // Other featured articles (smaller) with enhanced styling
+    articles.slice(1, 3).forEach((article) => {
+      html += `
+        <div class="relative group overflow-hidden rounded-2xl shadow-xl hover-lift">
+          <a href="/article/${article.slug}" class="block img-zoom">
+            <div class="relative h-72 img-overlay">
+              <img src="${article.image_url}" alt="${article.title}" 
+                   class="w-full h-full object-cover">
+              <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 group-hover:opacity-70 transition-opacity duration-500"></div>
+              <div class="absolute bottom-0 left-0 right-0 p-6 z-10">
+                <div class="flex flex-wrap gap-2 mb-3">
+                  ${article.breaking ? '<span class="bg-gradient-to-r from-red-600 to-red-700 text-white px-3 py-1.5 rounded-md text-xs font-bold shadow-lg pulse-animation"><i class="fas fa-bolt mr-1"></i> BREAKING</span>' : ""}
+                  <span class="category-badge ${article.category.color} text-white px-3 py-1.5 rounded-md text-xs font-bold shadow-lg">
+                    ${article.category.name}
+                  </span>
+                </div>
+                <h3 class="font-headline text-xl lg:text-2xl font-bold text-white mb-3 line-clamp-2 leading-tight">
+                  ${article.title}
+                </h3>
+                <div class="flex flex-wrap items-center gap-3 text-gray-200 text-xs">
+                  <span class="flex items-center"><i class="far fa-clock mr-1"></i> ${article.read_time}</span>
+                  <span class="flex items-center"><i class="far fa-eye mr-1"></i> ${article.views.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+    container.classList.add("fade-in-up");
+  }
+
+  // Fetch articles with enhanced loading
+  async function fetchArticles(page = 1, category = "All", append = false) {
+    try {
+      if (!append) showArticlesLoading();
+
+      const response = await fetch(
+        `/api/articles?category=${category}&page=${page}&limit=8`,
+      );
+      const data = await response.json();
+
+      totalArticles = data.total || 0;
+      updateArticleCount();
+
+      if (append) {
+        displayArticles(data.articles, true);
+      } else {
+        displayArticles(data.articles, false);
+      }
+
+      hasMore = data.has_next;
+      document.getElementById("load-more").classList.toggle("hidden", !hasMore);
+
+      hideArticlesLoading();
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+      document.getElementById("articles-grid").innerHTML =
+        '<div class="text-center py-12 text-red-500"><i class="fas fa-exclamation-triangle text-4xl mb-4"></i><p>Error loading articles. Please try again.</p></div>';
+      hideArticlesLoading();
+    }
+  }
+
+  // Display articles with enhanced card design
+  function displayArticles(articles, append = false) {
+    const container = document.getElementById("articles-grid");
+
+    if (articles.length === 0 && !append) {
+      container.innerHTML =
+        '<div class="text-center py-16 text-gray-500"><i class="fas fa-newspaper text-5xl mb-4 text-gray-300"></i><p class="text-lg font-medium">No articles found in this category</p></div>';
+      return;
+    }
+
+    const html = articles
+      .map(
+        (article) => `
+          <article class="card-premium overflow-hidden hover-lift fade-in-up">
+            <div class="md:flex">
+              <div class="md:w-1/3 img-zoom">
+                <a href="/article/${article.slug}" class="block">
+                  <img src="${article.image_url}" alt="${article.title}" 
+                       class="w-full h-56 md:h-full object-cover">
+                </a>
+              </div>
+              <div class="p-6 md:w-2/3">
+                <div class="flex flex-wrap items-center gap-2 mb-4">
+                  ${article.breaking ? '<span class="bg-gradient-to-r from-red-600 to-red-700 text-white px-3 py-1.5 rounded-md text-xs font-bold pulse-animation shadow-md"><i class="fas fa-bolt mr-1"></i> BREAKING</span>' : ""}
+                  <span class="category-badge ${article.category.color} text-white px-3 py-1.5 rounded-md text-xs font-bold shadow-sm">
+                    ${article.category.name}
+                  </span>
+                </div>
+                <h3 class="font-headline text-xl md:text-2xl font-bold text-gray-900 mb-3 leading-tight">
+                  <a href="/article/${article.slug}" class="hover:text-blue-600 transition-colors duration-300">${article.title}</a>
+                </h3>
+                <p class="text-gray-600 mb-5 line-clamp-2 leading-relaxed">${article.excerpt}</p>
+                <div class="flex flex-wrap items-center gap-5 text-sm text-gray-500">
+                  <div class="flex items-center space-x-2">
+                    <img src="${article.author.avatar_url}" alt="${article.author.full_name}" 
+                         class="w-9 h-9 rounded-full border-2 border-gray-200">
+                    <span class="font-medium text-gray-700">${article.author.full_name}</span>
+                  </div>
+                  <span class="flex items-center"><i class="far fa-clock mr-1.5"></i> ${article.read_time}</span>
+                  <span class="flex items-center"><i class="far fa-eye mr-1.5"></i> ${article.views.toLocaleString()}</span>
+                  <span class="flex items-center"><i class="far fa-calendar mr-1.5"></i> ${article.date}</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        `,
+      )
+      .join("");
+
+    if (append) {
+      container.innerHTML += html;
+    } else {
+      container.innerHTML = html;
+    }
+  }
+
+  // Show articles loading state
+  function showArticlesLoading() {
+    const container = document.getElementById("articles-grid");
+    container.innerHTML = `
+      <div class="space-y-6">
+        ${Array(3)
+          .fill(0)
+          .map(
+            () => `
+          <div class="card-premium overflow-hidden">
+            <div class="md:flex">
+              <div class="md:w-1/3 bg-gray-200 h-56 md:h-auto skeleton"></div>
+              <div class="p-6 md:w-2/3 space-y-3">
+                <div class="bg-gray-200 h-4 w-28 rounded skeleton"></div>
+                <div class="bg-gray-200 h-6 w-full rounded skeleton"></div>
+                <div class="bg-gray-200 h-6 w-5/6 rounded skeleton"></div>
+                <div class="bg-gray-200 h-4 w-full rounded skeleton"></div>
+                <div class="flex gap-4">
+                  <div class="bg-gray-200 h-3 w-24 rounded skeleton"></div>
+                  <div class="bg-gray-200 h-3 w-20 rounded skeleton"></div>
+                  <div class="bg-gray-200 h-3 w-20 rounded skeleton"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+          )
+          .join("")}
+      </div>
+    `;
+  }
+
+  function hideArticlesLoading() {
+    // Loading is replaced by actual content
+  }
+
+  // Update article count
+  function updateArticleCount() {
+    const countEl = document.getElementById("article-count");
+    if (countEl) {
+      countEl.innerHTML = `<strong>${totalArticles}</strong> articles available`;
+    }
+  }
+
+  // Fetch trending articles
+  async function fetchTrendingArticles() {
+    try {
+      const response = await fetch("/api/articles/trending?limit=5");
+      const articles = await response.json();
+      displayTrendingArticles(articles);
+    } catch (error) {
+      console.error("Error fetching trending articles:", error);
+    }
+  }
+
+  // Display trending articles with enhanced design
+  function displayTrendingArticles(articles) {
+    const container = document.getElementById("trending-articles");
+
+    if (articles.length === 0) {
+      container.innerHTML =
+        '<p class="text-center text-gray-500 text-sm py-4">No trending articles</p>';
+      return;
+    }
+
+    const html = articles
+      .map(
+        (article, index) => `
+          <div class="flex gap-4 pb-4 border-b border-gray-100 last:border-0 group hover:bg-gray-50 -mx-2 px-2 py-2 rounded-lg transition-all duration-300">
+            <span class="text-3xl font-bold bg-gradient-to-br from-gray-200 to-gray-300 text-gray-600 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 transition-transform duration-300">${(index + 1).toString().padStart(2, "0")}</span>
+            <div class="flex-1">
+              <h4 class="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-2 leading-snug">
+                <a href="/article/${article.slug}">${article.title}</a>
+              </h4>
+              <div class="flex items-center gap-3 text-xs text-gray-500">
+                <span class="flex items-center"><i class="far fa-eye mr-1"></i> ${article.views.toLocaleString()}</span>
+                <span class="flex items-center"><i class="far fa-clock mr-1"></i> ${article.read_time}</span>
+              </div>
+            </div>
+          </div>
+        `,
+      )
+      .join("");
+
+    container.innerHTML = html;
+  }
+
+  // Fetch tags
+  async function fetchTags() {
+    try {
+      const response = await fetch("/api/tags");
+      const tags = await response.json();
+      displayTags(tags);
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+    }
+  }
+
+  // Display tags with enhanced design
+  function displayTags(tags) {
+    const container = document.getElementById("popular-tags");
+    const html = tags
+      .map(
+        (tag) => `
+          <a href="/?tag=${tag.slug}" class="bg-gradient-to-r from-gray-100 to-gray-200 hover:from-blue-100 hover:to-blue-200 hover:text-blue-700 text-gray-700 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 inline-block">
+            #${tag.name}
+          </a>
+        `,
+      )
+      .join("");
+    container.innerHTML = html;
+    container.className = "flex flex-wrap gap-2";
+  }
+
+  // Category filter with enhanced functionality
+  async function setupCategoryFilter() {
+    const select = document.getElementById("category-filter");
+
+    try {
+      const response = await fetch("/api/categories");
+      const categories = await response.json();
+
+      categories.forEach((cat) => {
+        const option = document.createElement("option");
+        option.value = cat.slug;
+        option.textContent = `${cat.icon} ${cat.name}`;
+        select.appendChild(option);
+      });
+
+      select.addEventListener("change", (e) => {
+        currentCategory = e.target.value;
+        currentPage = 1;
+        fetchArticles(currentPage, currentCategory);
+        window.scrollTo({ top: 500, behavior: "smooth" });
+      });
+    } catch (error) {
+      console.error("Error setting up category filter:", error);
+    }
+  }
+
+  // Load more button with enhanced feedback
+  document.getElementById("load-more").addEventListener("click", () => {
+    currentPage++;
+    document.getElementById("load-more").classList.add("hidden");
+    document.getElementById("loading-more").classList.remove("hidden");
+
+    fetchArticles(currentPage, currentCategory, true).then(() => {
+      document.getElementById("loading-more").classList.add("hidden");
+    });
+  });
+
+  // Sidebar newsletter handler
+  document
+    .getElementById("sidebar-newsletter-form")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const message = document.getElementById("sidebar-newsletter-message");
+      const email = form.querySelector('input[type="email"]').value;
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+
+      submitBtn.innerHTML =
+        '<i class="fas fa-spinner fa-spin mr-2"></i>Subscribing...';
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch("/api/newsletter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        const data = await response.json();
+        message.innerHTML = `<div class="text-green-600 font-medium"><i class="fas fa-check-circle mr-1"></i>${data.message}</div>`;
+        form.reset();
+      } catch (error) {
+        message.innerHTML =
+          '<div class="text-red-600 font-medium"><i class="fas fa-exclamation-circle mr-1"></i>Failed. Please try again.</div>';
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        setTimeout(() => {
+          message.innerHTML = "";
+        }, 5000);
+      }
+    });
+
+  // Initialize with staggered animations
+  document.addEventListener("DOMContentLoaded", () => {
+    fetchFeaturedArticles();
+    fetchArticles(1, "All");
+    fetchTrendingArticles();
+    fetchTags();
+    setupCategoryFilter();
+  });
+</script>
+{% endblock %}

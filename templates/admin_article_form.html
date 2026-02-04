@@ -1,0 +1,521 @@
+{% extends "admin_base.html" %} 
+{% block title %}{% if article %}Edit Article{% else %}New Article{% endif %}{% endblock %} 
+{% block content %}
+<div class="max-w-5xl">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">
+      {% if article %}Edit Article{% else %}Create New Article{% endif %}
+    </h1>
+    <p class="text-gray-600 mt-2">
+      {% if article %}Update your article details below{% else %}Fill in the
+      form to create a new article{% endif %}
+    </p>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data" class="space-y-6">
+    <!-- Title -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <label for="title" class="block text-gray-700 font-medium mb-2">
+        Article Title <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        required
+        value="{% if article %}{{ article.title }}{% endif %}"
+        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+        placeholder="Enter a compelling title..."
+      />
+    </div>
+
+    <!-- Excerpt -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <label for="excerpt" class="block text-gray-700 font-medium mb-2">
+        Excerpt <span class="text-red-500">*</span>
+      </label>
+      <textarea
+        id="excerpt"
+        name="excerpt"
+        rows="3"
+        required
+        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+        placeholder="Brief summary of the article..."
+      >{% if article %}{{ article.excerpt }}{% endif %}</textarea>
+      <p class="text-sm text-gray-500 mt-1">
+        A short summary that appears in article listings
+      </p>
+    </div>
+
+    <!-- Cover Image -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <label class="block text-gray-700 font-medium mb-4">
+        Cover Image <span class="text-red-500">*</span>
+      </label>
+
+      <!-- Image Input Tabs -->
+      <div class="flex space-x-2 mb-4 border-b border-gray-200">
+        <button
+          type="button"
+          id="tab-url"
+          class="px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-medium"
+        >
+          <i class="fas fa-link mr-1"></i> Image URL
+        </button>
+        <button
+          type="button"
+          id="tab-upload"
+          class="px-4 py-2 text-gray-600 hover:text-blue-600"
+        >
+          <i class="fas fa-upload mr-1"></i> Upload Image
+        </button>
+      </div>
+
+      <!-- URL Input -->
+      <div id="url-input" class="space-y-3">
+        <input
+          type="text"
+          id="cover_image_url"
+          name="cover_image"
+          value="{% if article %}{{ article.cover_image }}{% endif %}"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+          placeholder="https://example.com/image.jpg"
+        />
+        <p class="text-sm text-gray-500">
+          <i class="fas fa-info-circle mr-1"></i> Paste a direct image URL
+          (recommended: 1200x675px)
+        </p>
+      </div>
+
+      <!-- Upload Input -->
+      <div id="upload-input" class="hidden space-y-3">
+        <div
+          class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition"
+        >
+          <input
+            type="file"
+            id="cover_image_file"
+            accept="image/*"
+            class="hidden"
+          />
+          <label for="cover_image_file" class="cursor-pointer">
+            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+            <p class="text-gray-600 mb-2">Click to upload or drag and drop</p>
+            <p class="text-sm text-gray-500">PNG, JPG, WEBP up to 16MB</p>
+          </label>
+        </div>
+        <div id="upload-progress" class="hidden">
+          <div class="bg-blue-100 rounded-full h-2">
+            <div
+              id="upload-bar"
+              class="bg-blue-600 h-2 rounded-full"
+              style="width: 0%"
+            ></div>
+          </div>
+          <p class="text-sm text-gray-600 mt-1 text-center">Uploading...</p>
+        </div>
+      </div>
+
+      <!-- Image Preview -->
+      <div
+        id="image-preview"
+        class="mt-4{% if not article or not article.cover_image %} hidden{% endif %}"
+      >
+        <p class="text-sm text-gray-700 font-medium mb-2">Preview:</p>
+        <img
+          id="preview-img"
+          src="{% if article %}{{ article.cover_image }}{% endif %}"
+          alt="Preview"
+          class="w-full max-w-md rounded-lg shadow-md"
+        />
+      </div>
+    </div>
+
+    <!-- Category and Tags -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <label for="category_id" class="block text-gray-700 font-medium mb-2">
+          Category <span class="text-red-500">*</span>
+        </label>
+        <select
+          id="category_id"
+          name="category_id"
+          required
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+        >
+          <option value="">Select a category</option>
+          {% for category in categories %}
+          <option
+            value="{{ category.id }}"
+            {% if article and article.category_id == category.id %}selected{% endif %}
+          >
+            {{ category.icon }} {{ category.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <label class="block text-gray-700 font-medium mb-2"> Tags </label>
+        <div
+          class="max-h-40 overflow-y-auto border border-gray-300 rounded-lg p-3"
+        >
+          {% for tag in tags %}
+          <label
+            class="flex items-center space-x-2 py-1 hover:bg-gray-50 cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              name="tags"
+              value="{{ tag.id }}"
+              {% if article_tags and tag.id in article_tags %}checked{% endif %}
+              class="rounded text-blue-600"
+            />
+            <span class="text-sm">{{ tag.name }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Editor -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <label for="content" class="block text-gray-700 font-medium mb-2">
+        Article Content <span class="text-red-500">*</span>
+      </label>
+      <textarea
+        id="content"
+        name="content"
+        rows="20"
+        required
+        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm"
+        placeholder="Write your article content here... (HTML supported)"
+      >{% if article %}{{ article.content }}{% endif %}</textarea>
+      <div class="mt-2 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onclick="insertTag('<h2></h2>')"
+          class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded"
+        >
+          H2
+        </button>
+        <button
+          type="button"
+          onclick="insertTag('<h3></h3>')"
+          class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded"
+        >
+          H3
+        </button>
+        <button
+          type="button"
+          onclick="insertTag('<p></p>')"
+          class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded"
+        >
+          P
+        </button>
+        <button
+          type="button"
+          onclick="insertTag('<strong></strong>')"
+          class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded"
+        >
+          <b>Bold</b>
+        </button>
+        <button
+          type="button"
+          onclick="insertTag('<em></em>')"
+          class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded"
+        >
+          <i>Italic</i>
+        </button>
+        <button
+          type="button"
+          onclick="insertTag('<ul><li></li></ul>')"
+          class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded"
+        >
+          List
+        </button>
+        <button
+          type="button"
+          onclick="insertTag('<a href=&quot;&quot;></a>')"
+          class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded"
+        >
+          Link
+        </button>
+      </div>
+    </div>
+
+    <!-- SEO Meta -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <h3 class="text-lg font-bold text-gray-900 mb-4">
+        <i class="fas fa-search mr-2"></i> SEO Optimization
+      </h3>
+      <div class="space-y-4">
+        <div>
+          <label
+            for="meta_description"
+            class="block text-gray-700 font-medium mb-2"
+          >
+            Meta Description
+          </label>
+          <textarea
+            id="meta_description"
+            name="meta_description"
+            rows="3"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            placeholder="SEO description (will use excerpt if empty)"
+          >{% if article %}{{ article.meta_description }}{% endif %}</textarea>
+          <p class="text-sm text-gray-500 mt-1">
+            Recommended: 150-160 characters
+          </p>
+        </div>
+        <div>
+          <label
+            for="meta_keywords"
+            class="block text-gray-700 font-medium mb-2"
+          >
+            Meta Keywords
+          </label>
+          <input
+            type="text"
+            id="meta_keywords"
+            name="meta_keywords"
+            value="{% if article %}{{ article.meta_keywords }}{% endif %}"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            placeholder="keyword1, keyword2, keyword3"
+          />
+          <p class="text-sm text-gray-500 mt-1">
+            Comma-separated keywords for SEO
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Article Options -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+      <h3 class="text-lg font-bold text-gray-900 mb-4">Article Options</h3>
+      
+      {% if session.role == 'admin' %}
+      <!-- Admin sees all options -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <label class="flex items-center space-x-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="featured"
+            value="1"
+            {% if article and article.featured %}checked{% endif %}
+            class="w-5 h-5 text-blue-600 rounded"
+          />
+          <span class="text-gray-700">
+            <i class="fas fa-star text-yellow-500 mr-1"></i> Featured Article
+          </span>
+        </label>
+        <label class="flex items-center space-x-3 cursor-pointer">
+          <input
+            type="checkbox"
+            name="breaking"
+            value="1"
+            {% if article and article.breaking %}checked{% endif %}
+            class="w-5 h-5 text-red-600 rounded"
+          />
+          <span class="text-gray-700">
+            <i class="fas fa-bolt text-red-500 mr-1"></i> Breaking News
+          </span>
+        </label>
+        <div>
+          <select
+            name="status"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          >
+            <option value="draft" {% if article and article.status == "draft" %}selected{% endif %}>
+              Draft
+            </option>
+            <option value="pending" {% if article and article.status == "pending" %}selected{% endif %}>
+              Pending Review
+            </option>
+            <option value="published" {% if not article or article.status == "published" %}selected{% endif %}>
+              Published
+            </option>
+          </select>
+        </div>
+      </div>
+      {% else %}
+      <!-- Writer sees limited options -->
+      <div class="space-y-4">
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div class="flex items-start gap-3">
+            <i class="fas fa-info-circle text-blue-600 mt-1"></i>
+            <div>
+              <p class="text-sm text-blue-900 font-medium mb-1">Writer Guidelines</p>
+              <p class="text-sm text-blue-700">
+                You can save articles as <strong>Draft</strong> to edit later, or <strong>Submit for Review</strong> to have an admin review and publish it. Only admins can publish articles directly.
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">
+            Article Status <span class="text-red-500">*</span>
+          </label>
+          <select
+            name="status"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+          >
+            <option value="draft" {% if not article or article.status == "draft" %}selected{% endif %}>
+              <i class="fas fa-file-alt"></i> Save as Draft
+            </option>
+            <option value="pending" {% if article and article.status == "pending" %}selected{% endif %}>
+              <i class="fas fa-paper-plane"></i> Submit for Review
+            </option>
+          </select>
+          <p class="text-sm text-gray-500 mt-2">
+            <i class="fas fa-lightbulb mr-1"></i> 
+            <strong>Drafts</strong> can be edited anytime. 
+            <strong>Submitted articles</strong> will be reviewed by an admin before publication.
+          </p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Submit Buttons -->
+    <div
+      class="flex items-center justify-between bg-white rounded-lg shadow-sm p-6"
+    >
+      <a
+        href="{{ url_for('admin_articles') }}"
+        class="text-gray-600 hover:text-gray-800"
+      >
+        <i class="fas fa-arrow-left mr-1"></i> Back to Articles
+      </a>
+      <div class="space-x-3">
+        <button
+          type="submit"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition"
+        >
+          <i class="fas fa-save mr-2"></i>
+          {% if article %}
+            {% if session.role == 'writer' %}Save Changes{% else %}Update Article{% endif %}
+          {% else %}
+            {% if session.role == 'writer' %}Save Article{% else %}Create Article{% endif %}
+          {% endif %}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Tab switching for image input
+  const tabUrl = document.getElementById("tab-url");
+  const tabUpload = document.getElementById("tab-upload");
+  const urlInput = document.getElementById("url-input");
+  const uploadInput = document.getElementById("upload-input");
+  const coverImageUrl = document.getElementById("cover_image_url");
+  const coverImageFile = document.getElementById("cover_image_file");
+  const imagePreview = document.getElementById("image-preview");
+  const previewImg = document.getElementById("preview-img");
+
+  tabUrl.addEventListener("click", () => {
+    tabUrl.classList.add("text-blue-600", "border-blue-600", "font-medium");
+    tabUrl.classList.remove("text-gray-600");
+    tabUpload.classList.remove(
+      "text-blue-600",
+      "border-blue-600",
+      "font-medium",
+    );
+    tabUpload.classList.add("text-gray-600");
+    urlInput.classList.remove("hidden");
+    uploadInput.classList.add("hidden");
+  });
+
+  tabUpload.addEventListener("click", () => {
+    tabUpload.classList.add("text-blue-600", "border-blue-600", "font-medium");
+    tabUpload.classList.remove("text-gray-600");
+    tabUrl.classList.remove("text-blue-600", "border-blue-600", "font-medium");
+    tabUrl.classList.add("text-gray-600");
+    uploadInput.classList.remove("hidden");
+    urlInput.classList.add("hidden");
+  });
+
+  // Preview URL image
+  coverImageUrl.addEventListener("input", (e) => {
+    const url = e.target.value;
+    if (url) {
+      previewImg.src = url;
+      imagePreview.classList.remove("hidden");
+    } else {
+      imagePreview.classList.add("hidden");
+    }
+  });
+
+  // File upload
+  coverImageFile.addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const progressBar = document.getElementById("upload-bar");
+    const progressContainer = document.getElementById("upload-progress");
+
+    try {
+      progressContainer.classList.remove("hidden");
+
+      const response = await fetch("/admin/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        coverImageUrl.value = data.url;
+        previewImg.src = data.url;
+        imagePreview.classList.remove("hidden");
+        progressBar.style.width = "100%";
+        setTimeout(() => {
+          progressContainer.classList.add("hidden");
+          progressBar.style.width = "0%";
+        }, 1000);
+      } else {
+        alert("Upload failed. Please try again.");
+        progressContainer.classList.add("hidden");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Upload failed. Please try again.");
+      progressContainer.classList.add("hidden");
+    }
+  });
+
+  // HTML tag insertion helper
+  function insertTag(tag) {
+    const textarea = document.getElementById("content");
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const before = text.substring(0, start);
+    const selected = text.substring(start, end);
+    const after = text.substring(end);
+
+    const openTag = tag.split("</")[0];
+    const closeTag = tag.includes("</") ? "</" + tag.split("</")[1] : "";
+
+    textarea.value = before + openTag + selected + closeTag + after;
+
+    // Set cursor position
+    const newPos = start + openTag.length + selected.length;
+    textarea.setSelectionRange(newPos, newPos);
+    textarea.focus();
+  }
+
+  // Auto-generate meta description from excerpt
+  document.getElementById("excerpt").addEventListener("input", (e) => {
+    const metaDesc = document.getElementById("meta_description");
+    if (!metaDesc.value) {
+      metaDesc.value = e.target.value.substring(0, 160);
+    }
+  });
+</script>
+{% endblock %}

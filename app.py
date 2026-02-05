@@ -1117,6 +1117,6 @@ def subscribe_newsletter():
     return jsonify({'message': msg})
 
 if __name__ == '__main__':
-    print("\n🚀 Eastern Star News Platform")
+    print("\n🚀 BlackStar Herald News Platform")
     print("=" * 50)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(bebug=False)

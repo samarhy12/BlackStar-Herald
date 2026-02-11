@@ -1117,6 +1117,6 @@ def subscribe_newsletter():
     return jsonify({'message': msg})
 
 if __name__ == '__main__':
-    print("\n🚀 BlackStar Herald News Platform")
+    print("\n🚀 Cherish Newsroom Platform")
     print("=" * 50)
-    app.run(bebug=False)
+    app.run(debug=False, host='0.0.0.0', port=5000)

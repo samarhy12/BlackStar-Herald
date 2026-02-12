@@ -241,6 +241,19 @@
         >
           Link
         </button>
+        <button
+          type="button"
+          onclick="openImageModal()"
+          class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded font-medium"
+        >
+          <i class="fas fa-image mr-1"></i> Insert Image
+        </button>
+      </div>
+      
+      <!-- Image Insertion Helper -->
+      <div class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+        <i class="fas fa-info-circle mr-1"></i>
+        <strong>Tip:</strong> Click "Insert Image" to add photos within your article content. Images will be automatically styled and responsive.
       </div>
     </div>
 
@@ -405,6 +418,174 @@
   </form>
 </div>
 
+<!-- Image Insertion Modal -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 p-4 overflow-y-auto" style="display: none;">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-auto my-8 flex flex-col max-h-[calc(100vh-4rem)]">
+    <!-- Header - Fixed -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 flex items-center justify-between flex-shrink-0 rounded-t-2xl">
+      <h3 class="text-xl font-bold text-white flex items-center">
+        <i class="fas fa-image mr-2"></i> Insert Image into Article
+      </h3>
+      <button onclick="closeImageModal()" class="text-white hover:text-gray-200 text-2xl leading-none">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <!-- Content - Scrollable -->
+    <div class="p-6 overflow-y-auto flex-1 min-h-0">
+      <!-- Modal Tabs -->
+      <div class="flex space-x-2 mb-6 border-b border-gray-200">
+        <button
+          type="button"
+          id="modal-tab-url"
+          onclick="switchModalTab('url')"
+          class="px-4 py-2 text-blue-600 border-b-2 border-blue-600 font-medium"
+        >
+          <i class="fas fa-link mr-1"></i> Image URL
+        </button>
+        <button
+          type="button"
+          id="modal-tab-upload"
+          onclick="switchModalTab('upload')"
+          class="px-4 py-2 text-gray-600 hover:text-blue-600"
+        >
+          <i class="fas fa-upload mr-1"></i> Upload Image
+        </button>
+      </div>
+
+      <!-- URL Input -->
+      <div id="modal-url-input" class="space-y-4">
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Image URL</label>
+          <input
+            type="text"
+            id="inline-image-url"
+            placeholder="https://example.com/image.jpg"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+          />
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Image Caption (optional)</label>
+          <input
+            type="text"
+            id="inline-image-caption"
+            placeholder="Enter a caption for this image"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+          />
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Image Size</label>
+          <select id="inline-image-size" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+            <option value="full">Full Width</option>
+            <option value="large">Large (75%)</option>
+            <option value="medium" selected>Medium (50%)</option>
+            <option value="small">Small (33%)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Alignment</label>
+          <div class="flex gap-2">
+            <label class="flex-1 cursor-pointer px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-center">
+              <input type="radio" name="image-align" value="left" class="mr-2">
+              <i class="fas fa-align-left"></i> Left
+            </label>
+            <label class="flex-1 cursor-pointer px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-center">
+              <input type="radio" name="image-align" value="center" checked class="mr-2">
+              <i class="fas fa-align-center"></i> Center
+            </label>
+            <label class="flex-1 cursor-pointer px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-center">
+              <input type="radio" name="image-align" value="right" class="mr-2">
+              <i class="fas fa-align-right"></i> Right
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Input -->
+      <div id="modal-upload-input" class="hidden space-y-4">
+        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition">
+          <input
+            type="file"
+            id="inline-image-file"
+            accept="image/*"
+            class="hidden"
+          />
+          <label for="inline-image-file" class="cursor-pointer block">
+            <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-3 block"></i>
+            <p class="text-gray-600 mb-2 font-medium">Click to upload or drag and drop</p>
+            <p class="text-sm text-gray-500">PNG, JPG, WEBP up to 16MB</p>
+          </label>
+        </div>
+        <div id="modal-upload-progress" class="hidden">
+          <div class="bg-blue-100 rounded-full h-2">
+            <div id="modal-upload-bar" class="bg-blue-600 h-2 rounded-full transition-all" style="width: 0%"></div>
+          </div>
+          <p class="text-sm text-gray-600 mt-2 text-center">Uploading...</p>
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Image Caption (optional)</label>
+          <input
+            type="text"
+            id="inline-image-caption-upload"
+            placeholder="Enter a caption for this image"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+          />
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Image Size</label>
+          <select id="inline-image-size-upload" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+            <option value="full">Full Width</option>
+            <option value="large">Large (75%)</option>
+            <option value="medium" selected>Medium (50%)</option>
+            <option value="small">Small (33%)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">Alignment</label>
+          <div class="flex gap-2">
+            <label class="flex-1 cursor-pointer px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-center">
+              <input type="radio" name="image-align-upload" value="left" class="mr-2">
+              <i class="fas fa-align-left"></i> Left
+            </label>
+            <label class="flex-1 cursor-pointer px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-center">
+              <input type="radio" name="image-align-upload" value="center" checked class="mr-2">
+              <i class="fas fa-align-center"></i> Center
+            </label>
+            <label class="flex-1 cursor-pointer px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-center">
+              <input type="radio" name="image-align-upload" value="right" class="mr-2">
+              <i class="fas fa-align-right"></i> Right
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div id="modal-image-preview" class="mt-6 hidden">
+        <p class="text-sm text-gray-700 font-medium mb-2">Preview:</p>
+        <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+          <img id="modal-preview-img" src="" alt="Preview" class="max-w-full rounded-lg shadow-md mx-auto" style="max-height: 300px;" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer - Fixed -->
+    <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 flex-shrink-0 border-t border-gray-200 rounded-b-2xl">
+      <button
+        onclick="closeImageModal()"
+        class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition font-medium"
+      >
+        Cancel
+      </button>
+      <button
+        onclick="insertInlineImage()"
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition font-medium"
+      >
+        <i class="fas fa-plus mr-2"></i> Insert Image
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
   // Tab switching for image input
   const tabUrl = document.getElementById("tab-url");
@@ -515,6 +696,186 @@
     const metaDesc = document.getElementById("meta_description");
     if (!metaDesc.value) {
       metaDesc.value = e.target.value.substring(0, 160);
+    }
+  });
+
+  // ==================== IMAGE INSERTION MODAL ====================
+  
+  let currentModalTab = 'url';
+  let uploadedImageUrl = '';
+
+  function openImageModal() {
+    document.getElementById('imageModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeImageModal() {
+    document.getElementById('imageModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+    
+    // Reset form
+    document.getElementById('inline-image-url').value = '';
+    document.getElementById('inline-image-caption').value = '';
+    document.getElementById('inline-image-caption-upload').value = '';
+    document.getElementById('modal-image-preview').classList.add('hidden');
+    uploadedImageUrl = '';
+  }
+
+  function switchModalTab(tab) {
+    currentModalTab = tab;
+    const urlTab = document.getElementById('modal-tab-url');
+    const uploadTab = document.getElementById('modal-tab-upload');
+    const urlInput = document.getElementById('modal-url-input');
+    const uploadInput = document.getElementById('modal-upload-input');
+
+    if (tab === 'url') {
+      urlTab.classList.add('text-blue-600', 'border-blue-600', 'font-medium');
+      urlTab.classList.remove('text-gray-600');
+      uploadTab.classList.remove('text-blue-600', 'border-blue-600', 'font-medium');
+      uploadTab.classList.add('text-gray-600');
+      urlInput.classList.remove('hidden');
+      uploadInput.classList.add('hidden');
+    } else {
+      uploadTab.classList.add('text-blue-600', 'border-blue-600', 'font-medium');
+      uploadTab.classList.remove('text-gray-600');
+      urlTab.classList.remove('text-blue-600', 'border-blue-600', 'font-medium');
+      urlTab.classList.add('text-gray-600');
+      uploadInput.classList.remove('hidden');
+      urlInput.classList.add('hidden');
+    }
+  }
+
+  // Preview inline image URL
+  document.getElementById('inline-image-url').addEventListener('input', (e) => {
+    const url = e.target.value;
+    const preview = document.getElementById('modal-image-preview');
+    const previewImg = document.getElementById('modal-preview-img');
+    
+    if (url) {
+      previewImg.src = url;
+      preview.classList.remove('hidden');
+    } else {
+      preview.classList.add('hidden');
+    }
+  });
+
+  // Inline image file upload
+  document.getElementById('inline-image-file').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const progressBar = document.getElementById('modal-upload-bar');
+    const progressContainer = document.getElementById('modal-upload-progress');
+    const preview = document.getElementById('modal-image-preview');
+    const previewImg = document.getElementById('modal-preview-img');
+
+    try {
+      progressContainer.classList.remove('hidden');
+
+      const response = await fetch('/admin/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        uploadedImageUrl = data.url;
+        previewImg.src = data.url;
+        preview.classList.remove('hidden');
+        progressBar.style.width = '100%';
+        
+        setTimeout(() => {
+          progressContainer.classList.add('hidden');
+          progressBar.style.width = '0%';
+        }, 1000);
+      } else {
+        alert('Upload failed. Please try again.');
+        progressContainer.classList.add('hidden');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Upload failed. Please try again.');
+      progressContainer.classList.add('hidden');
+    }
+  });
+
+  function insertInlineImage() {
+    let imageUrl = '';
+    let caption = '';
+    let size = 'medium';
+    let align = 'center';
+
+    if (currentModalTab === 'url') {
+      imageUrl = document.getElementById('inline-image-url').value.trim();
+      caption = document.getElementById('inline-image-caption').value.trim();
+      size = document.getElementById('inline-image-size').value;
+      align = document.querySelector('input[name="image-align"]:checked').value;
+    } else {
+      imageUrl = uploadedImageUrl;
+      caption = document.getElementById('inline-image-caption-upload').value.trim();
+      size = document.getElementById('inline-image-size-upload').value;
+      align = document.querySelector('input[name="image-align-upload"]:checked').value;
+    }
+
+    if (!imageUrl) {
+      alert('Please enter an image URL or upload an image');
+      return;
+    }
+
+    // Generate size class
+    let sizeClass = '';
+    switch(size) {
+      case 'full': sizeClass = 'w-full'; break;
+      case 'large': sizeClass = 'w-3/4'; break;
+      case 'medium': sizeClass = 'w-1/2'; break;
+      case 'small': sizeClass = 'w-1/3'; break;
+    }
+
+    // Generate alignment class
+    let alignClass = '';
+    switch(align) {
+      case 'left': alignClass = 'mr-auto'; break;
+      case 'center': alignClass = 'mx-auto'; break;
+      case 'right': alignClass = 'ml-auto'; break;
+    }
+
+    // Generate HTML
+    let imageHtml = `
+<figure class="article-image my-8">
+  <img src="${imageUrl}" alt="${caption || 'Article image'}" class="${sizeClass} ${alignClass} rounded-xl shadow-lg" />`;
+    
+    if (caption) {
+      imageHtml += `
+  <figcaption class="text-center text-sm text-gray-600 mt-3 italic">${caption}</figcaption>`;
+    }
+    
+    imageHtml += `
+</figure>
+`;
+
+    // Insert into content
+    const textarea = document.getElementById('content');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    
+    textarea.value = text.substring(0, start) + imageHtml + text.substring(end);
+    
+    // Set cursor after inserted content
+    const newPos = start + imageHtml.length;
+    textarea.setSelectionRange(newPos, newPos);
+    textarea.focus();
+
+    closeImageModal();
+  }
+
+  // Close modal on outside click
+  document.getElementById('imageModal').addEventListener('click', (e) => {
+    if (e.target.id === 'imageModal') {
+      closeImageModal();
     }
   });
 </script>

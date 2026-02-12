@@ -111,7 +111,14 @@
     />
 
     <!-- Bing Webmaster Verification -->
-    <meta name="msvalidate.01" content="YOUR_BING_VERIFICATION_CODE" />
+    <meta name="msvalidate.01" content="7E414A7E30BB07D67E2CC77B06AEA03E" />
+
+    <!-- google adsense -->
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1220199510675200"
+      crossorigin="anonymous"
+    ></script>
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://cdn.tailwindcss.com" />
@@ -650,6 +657,30 @@
       }
       .fade-in-up {
         animation: fadeInUp 0.6s ease-out;
+      }
+
+      /* Custom scrollbar for modal */
+      #imageModal .overflow-y-auto {
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e0 #f7fafc;
+      }
+
+      #imageModal .overflow-y-auto::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      #imageModal .overflow-y-auto::-webkit-scrollbar-track {
+        background: #f7fafc;
+        border-radius: 4px;
+      }
+
+      #imageModal .overflow-y-auto::-webkit-scrollbar-thumb {
+        background: #cbd5e0;
+        border-radius: 4px;
+      }
+
+      #imageModal .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+        background: #a0aec0;
       }
     </style>
 

@@ -10,7 +10,7 @@ import unicodedata
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-in-production'
-app.config['DATABASE'] = 'news.db'
+app.config['DATABASE'] = 'news (1).db'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
